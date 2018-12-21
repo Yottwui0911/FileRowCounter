@@ -81,7 +81,15 @@ namespace FileRowCounter.Model
                 dic.Add(filePath, File.ReadAllLines(filePath).Length);
             }
 
-            foreach (var d in Directory.GetDirectories(rootPath).Where(x => !this.Contains(x)))
+            var directories = Directory.GetDirectories(rootPath);
+
+            // 空文字以外の無視リストが存在する場合、そのディレクトリだけ除く
+            if(this.ExceptDirectory.Any(x=>!string.IsNullOrWhiteSpace(x)))
+            {
+                directories = directories.Where(x => !this.Contains(x)).ToArray();
+            }
+
+            foreach (var d in directories)
             {
                 // 再帰的に関数を呼び出すことですべてのフォルダのファイルを走査する
                 this.Getfiles(d, ref dic);
