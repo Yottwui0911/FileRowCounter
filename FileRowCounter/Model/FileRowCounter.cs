@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,6 +8,13 @@ namespace FileRowCounter.Model
 {
     public class RowCounter
     {
+        public RowCounter()
+        {
+            this.LoadConfig();
+        }
+
+        #region properties
+
         /// <summary>
         /// 対象のRootフォルダ
         /// </summary>
@@ -34,6 +42,10 @@ namespace FileRowCounter.Model
         /// </summary>
         public IEnumerable<string> ExceptDirectory { get; set; }
 
+        #endregion properties
+
+        #region methods
+
         /// <summary>
         /// ファイルパスとファイルの行数のDictionaryを返す
         /// </summary>
@@ -49,6 +61,9 @@ namespace FileRowCounter.Model
             {
                 dic = this.SortDictionary(dic);
             }
+
+            // 最後に検索した設定を保存
+            this.SaveConfig();
 
             return dic;
         }
@@ -93,5 +108,93 @@ namespace FileRowCounter.Model
             var sortedDic = dic.OrderByDescending(x => x.Value).Take(this.MaxCount);
             return sortedDic.ToDictionary(x => x.Key, y => y.Value);
         }
+
+        /// <summary>
+        /// configファイルPath
+        /// </summary>
+        private static readonly string m_config = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "row_counter.config");
+
+        private static readonly char m_exceptDirectorySeparater = ',';
+
+        private static readonly char m_configSeparater = '\t';
+
+        /// <summary>
+        /// Configファイルに設定を保存しておく
+        /// </summary>
+        private void SaveConfig()
+        {
+            var dic = new Dictionary<string, string>
+            {
+                {nameof(this.FolderPath),this.FolderPath },
+                {nameof(this.Extension),this.Extension },
+                {nameof(this.IsSort),this.IsSort.ToString() },
+                {nameof(this.MaxCount),this.MaxCount.ToString() },
+                {nameof(this.ExceptDirectory), string.Join(m_exceptDirectorySeparater.ToString() ,this.ExceptDirectory) },
+            };
+
+            using (var sw = new StreamWriter(m_config, false))
+            {
+                foreach (var item in dic)
+                {
+                    sw.WriteLine($"{item.Key}{m_configSeparater}{item.Value}");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Configファイルから設定を読み込む
+        /// </summary>
+        private void LoadConfig()
+        {
+            if(!File.Exists(m_config))
+            {
+                return;
+            }
+
+            using (var sr = new StreamReader(m_config))
+            {
+                var lines = new Dictionary<string, string>();
+
+                while (!sr.EndOfStream)
+                {
+                    var line = sr.ReadLine().Split(m_configSeparater);
+
+                    // KeyValuePairにならない場合無視
+                    if (line.Count() < 2)
+                    {
+                        continue;
+                    }
+                    lines.Add(line[0], line[1]);
+                }
+
+                // 読み込んだConfigの結果を反映
+                // TODO:2018-12-21 t-yoshizumi もっといい復元ロジックがあればそちらを採用
+                foreach (var line in lines)
+                {
+                    if (line.Key == nameof(this.FolderPath))
+                    {
+                        this.FolderPath = line.Value;
+                    }
+                    if (line.Key == nameof(this.Extension))
+                    {
+                        this.Extension = line.Value;
+                    }
+                    if (line.Key == nameof(this.IsSort) && bool.TryParse(line.Value, out bool isSort))
+                    {
+                        this.IsSort = isSort;
+                    }
+                    if (line.Key == nameof(this.MaxCount) && int.TryParse(line.Value, out int maxCount))
+                    {
+                        this.MaxCount = maxCount;
+                    }
+                    if (line.Key == nameof(this.ExceptDirectory))
+                    {
+                        this.ExceptDirectory = line.Value.Split(m_exceptDirectorySeparater);
+                    }
+                }
+            }
+        }
+
+        #endregion methods
     }
 }
