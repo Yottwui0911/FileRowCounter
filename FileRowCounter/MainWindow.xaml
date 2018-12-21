@@ -5,17 +5,16 @@
         xmlns:local="clr-namespace:FileRowCounter.Converter"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodel="clr-namespace:FileRowCounter.ViewModel"
-        Title="MainWindow"
         Width="800"
         Height="450"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="pack://application:,,,/MaterialDesignThemes.Wpf;component/Resources/Roboto/#Roboto"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         mc:Ignorable="d">
     <Window.DataContext>
         <viewmodel:MainViewModel />
     </Window.DataContext>
     <Window.Resources>
-        <Style x:Key="Margin" TargetType="FrameworkElement">
-            <Setter Property="Margin" Value="5" />
-        </Style>
         <local:BoolInverterConverter x:Key="BoolInverterConverter" />
     </Window.Resources>
     <Grid>
@@ -37,51 +36,59 @@
 
         <TextBlock Grid.Row="0"
                    Grid.Column="0"
+                   Margin="5"
                    HorizontalAlignment="Right"
-                   Style="{StaticResource Margin}"
+                   VerticalAlignment="Center"
                    Text="指定のフォルダ:" />
         <TextBox Grid.Row="0"
                  Grid.Column="1"
-                 Style="{StaticResource Margin}"
+                 Margin="5"
+                 VerticalAlignment="Center"
                  Text="{Binding Path=FolderPath, Mode=TwoWay}" />
         <Button Grid.Row="0"
                 Grid.Column="2"
+                Margin="5"
+                VerticalAlignment="Center"
                 Command="{Binding Path=ShowSearchDirectotyCommand, Mode=OneTime}"
-                Content="フォルダを検索する"
-                Style="{StaticResource Margin}" />
+                Content="フォルダを検索する" />
 
         <TextBlock Grid.Row="1"
                    Grid.Column="0"
+                   Margin="5"
                    HorizontalAlignment="Right"
-                   Style="{StaticResource Margin}"
+                   VerticalAlignment="Center"
                    Text="指定する拡張子:" />
         <TextBox Grid.Row="1"
                  Grid.Column="1"
                  Grid.ColumnSpan="2"
-                 Style="{StaticResource Margin}"
+                 Margin="5"
+                 VerticalAlignment="Center"
                  Text="{Binding Path=Extension, Mode=TwoWay}" />
 
         <TextBlock Grid.Row="2"
                    Grid.Column="0"
+                   Margin="5"
                    HorizontalAlignment="Right"
-                   Style="{StaticResource Margin}"
+                   VerticalAlignment="Center"
                    Text="無視するフォルダ:" />
         <TextBox Grid.Row="2"
                  Grid.Column="1"
                  Grid.ColumnSpan="2"
-                 Style="{StaticResource Margin}"
+                 Margin="5"
+                 VerticalAlignment="Center"
                  Text="{Binding Path=ExceptDirectories, Mode=TwoWay}" />
 
         <TextBlock Grid.Row="3"
                    Grid.Column="0"
+                   Margin="5"
                    HorizontalAlignment="Right"
-                   Style="{StaticResource Margin}"
+                   VerticalAlignment="Center"
                    Text="行数の多い順にSort:" />
         <StackPanel Grid.Row="3"
                     Grid.Column="1"
+                    Margin="5"
                     VerticalAlignment="Center"
-                    Orientation="Horizontal"
-                    Style="{StaticResource Margin}">
+                    Orientation="Horizontal">
             <RadioButton VerticalAlignment="Center"
                          Content="する"
                          GroupName="Sort"
@@ -97,28 +104,32 @@
 
         <TextBlock Grid.Row="4"
                    Grid.Column="0"
+                   Margin="5"
                    HorizontalAlignment="Right"
-                   Style="{StaticResource Margin}"
+                   VerticalAlignment="Center"
                    Text="上位何個まで表示するか:" />
         <TextBox Grid.Row="4"
                  Grid.Column="1"
                  Grid.ColumnSpan="2"
-                 Style="{StaticResource Margin}"
+                 Margin="5"
+                 VerticalAlignment="Center"
                  Text="{Binding Path=MaxCount, Mode=TwoWay}" />
 
         <Button Grid.Row="5"
                 Grid.ColumnSpan="3"
+                Margin="5"
+                VerticalAlignment="Center"
                 Command="{Binding Path=ExecuteCommand, Mode=OneTime}"
-                Content="実行"
-                Style="{StaticResource Margin}" />
+                Content="実行" />
 
         <ListBox Grid.Row="6"
                  Grid.ColumnSpan="3"
                  MaxHeight="300"
+                 Margin="5"
+                 VerticalAlignment="Center"
                  ItemsSource="{Binding Path=FileListIns, Mode=OneWay}"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                 Style="{StaticResource Margin}">
+                 ScrollViewer.VerticalScrollBarVisibility="Auto">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>
@@ -126,8 +137,8 @@
                             <ColumnDefinition Width="650" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock VerticalAlignment="Center"
-                                   Style="{StaticResource Margin}"
+                        <TextBlock Margin="5"
+                                   VerticalAlignment="Center"
                                    Text="{Binding Path=FilePath, Mode=OneWay}"
                                    TextWrapping="Wrap" />
                         <TextBlock Grid.Column="1"
