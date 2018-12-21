@@ -1,12 +1,12 @@
-﻿using System.Windows.Input;
-using FileRowCounter.Model;
-using Prism.Commands;
-using System.Windows.Forms;
-using Prism.Mvvm;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using System.Windows.Input;
+using FileRowCounter.Model;
+using Microsoft.WindowsAPICodePack.Dialogs;
+using Prism.Commands;
+using Prism.Mvvm;
 
 namespace FileRowCounter.ViewModel
 {
@@ -15,7 +15,7 @@ namespace FileRowCounter.ViewModel
         public MainViewModel()
         {
             this.ShowSearchDirectotyCommand = new DelegateCommand(this.ShowSerchDirectory);
-            this.ExecuteCommand = new DelegateCommand(async () => await this.Execute(),this.CanExcecute);
+            this.ExecuteCommand = new DelegateCommand(async () => await this.Execute(), this.CanExcecute);
         }
 
         private readonly RowCounter m_fileRowCounter = new RowCounter();
@@ -57,6 +57,22 @@ namespace FileRowCounter.ViewModel
         }
 
         /// <summary>
+        /// 無視するフォルダ
+        /// </summary>
+        public string ExceptDirectories
+        {
+            get
+            {
+                return string.Join(",", this.m_fileRowCounter.ExceptDirectory);
+            }
+            set
+            {
+                this.m_fileRowCounter.ExceptDirectory = value.Split(',');
+                this.RaisePropertyChanged(nameof(this.ExceptDirectories));
+            }
+        }
+
+        /// <summary>
         /// 数の多い順にSortラジオボタンの値
         /// </summary>
         public bool IsSort
@@ -94,6 +110,9 @@ namespace FileRowCounter.ViewModel
 
         private IEnumerable<FileList> m_fileList;
 
+        /// <summary>
+        /// ListBoxに表示する内容
+        /// </summary>
         public IEnumerable<FileList> FileListIns
         {
             get { return this.m_fileList; }
