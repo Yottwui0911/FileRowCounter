@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace FileRowCounter.Model
 {
@@ -37,12 +38,12 @@ namespace FileRowCounter.Model
         /// ファイルパスとファイルの行数のDictionaryを返す
         /// </summary>
         /// <returns></returns>
-        public IDictionary<string, int> CalcRowCount()
+        public async Task<IDictionary<string, int>> CalcRowCount()
         {
             // Key=ファイルパス, Value=ファイルの行数のDictionaryを作る
             var dic = new Dictionary<string, int>();
 
-            this.Getfiles(this.FolderPath, ref dic);
+            await Task.Run(() => this.Getfiles(this.FolderPath, ref dic));
 
             if (this.IsSort)
             {

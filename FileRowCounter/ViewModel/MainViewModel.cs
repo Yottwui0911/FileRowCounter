@@ -6,6 +6,7 @@ using Prism.Mvvm;
 using System;
 using System.Collections.Generic;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using System.Threading.Tasks;
 
 namespace FileRowCounter.ViewModel
 {
@@ -14,7 +15,7 @@ namespace FileRowCounter.ViewModel
         public MainViewModel()
         {
             this.ShowSearchDirectotyCommand = new DelegateCommand(this.ShowSerchDirectory);
-            this.ExecuteCommand = new DelegateCommand(this.Execute);
+            this.ExecuteCommand = new DelegateCommand(async () => await this.Execute(),this.CanExcecute);
         }
 
         private readonly RowCounter m_fileRowCounter = new RowCounter();
@@ -116,11 +117,11 @@ namespace FileRowCounter.ViewModel
             var dlg = new CommonOpenFileDialog("フォルダ選択");
             dlg.IsFolderPicker = true;
 
-                        //ダイアログを表示する
+            //ダイアログを表示する
             var ret = dlg.ShowDialog();
 
             if (ret != CommonFileDialogResult.Ok)
-            { 
+            {
                 return;
             }
 
@@ -134,7 +135,14 @@ namespace FileRowCounter.ViewModel
         /// <summary>
         /// 対象のRootフォルダを選択するダイアログを立ち上げる
         /// </summary>
-        public ICommand ExecuteCommand { get; }
+        public DelegateCommand ExecuteCommand { get; }
+
+        private bool m_canExecute = true;
+
+        private bool CanExcecute()
+        {
+            return this.m_canExecute;
+        }
 
         private bool Validate()
         {
@@ -153,7 +161,7 @@ namespace FileRowCounter.ViewModel
             return true;
         }
 
-        private void Execute()
+        private async Task Execute()
         {
             if (!this.Validate())
             {
@@ -164,16 +172,23 @@ namespace FileRowCounter.ViewModel
 
             try
             {
-                dic = this.m_fileRowCounter.CalcRowCount();
+                this.m_canExecute = false;
+                this.ExecuteCommand.RaiseCanExecuteChanged();
+                dic = await this.m_fileRowCounter.CalcRowCount();
             }
             catch (Exception e)
             {
                 MessageBox.Show($"ファイルの行数をカウントできませんでした。\n{e.StackTrace}");
                 return;
             }
+            finally
+            {
+                this.m_canExecute = true;
+                this.ExecuteCommand.RaiseCanExecuteChanged();
+            }
 
             var list = new List<FileList>();
-            foreach(var item in dic)
+            foreach (var item in dic)
             {
                 list.Add(new FileList { FilePath = item.Key, RowCount = item.Value });
             }
