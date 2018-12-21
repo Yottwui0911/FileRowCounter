@@ -26,6 +26,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -64,8 +65,19 @@
                    Grid.Column="0"
                    HorizontalAlignment="Right"
                    Style="{StaticResource Margin}"
+                   Text="無視するフォルダ:" />
+        <TextBox Grid.Row="2"
+                 Grid.Column="1"
+                 Grid.ColumnSpan="2"
+                 Style="{StaticResource Margin}"
+                 Text="{Binding Path=ExceptDirectories, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="3"
+                   Grid.Column="0"
+                   HorizontalAlignment="Right"
+                   Style="{StaticResource Margin}"
                    Text="行数の多い順にSort:" />
-        <StackPanel Grid.Row="2"
+        <StackPanel Grid.Row="3"
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
@@ -83,24 +95,24 @@
                          IsChecked="{Binding Path=IsSort, Converter={StaticResource BoolInverterConverter}}" />
         </StackPanel>
 
-        <TextBlock Grid.Row="3"
+        <TextBlock Grid.Row="4"
                    Grid.Column="0"
                    HorizontalAlignment="Right"
                    Style="{StaticResource Margin}"
                    Text="上位何個まで表示するか:" />
-        <TextBox Grid.Row="3"
+        <TextBox Grid.Row="4"
                  Grid.Column="1"
                  Grid.ColumnSpan="2"
                  Style="{StaticResource Margin}"
                  Text="{Binding Path=MaxCount, Mode=TwoWay}" />
 
-        <Button Grid.Row="4"
+        <Button Grid.Row="5"
                 Grid.ColumnSpan="3"
                 Command="{Binding Path=ExecuteCommand, Mode=OneTime}"
                 Content="実行"
                 Style="{StaticResource Margin}" />
 
-        <ListBox Grid.Row="5"
+        <ListBox Grid.Row="6"
                  Grid.ColumnSpan="3"
                  MaxHeight="300"
                  ItemsSource="{Binding Path=FileListIns, Mode=OneWay}"

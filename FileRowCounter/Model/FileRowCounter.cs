@@ -66,11 +66,21 @@ namespace FileRowCounter.Model
                 dic.Add(filePath, File.ReadAllLines(filePath).Length);
             }
 
-            foreach (var d in Directory.GetDirectories(rootPath))
+            foreach (var d in Directory.GetDirectories(rootPath).Where(x => !this.Contains(x)))
             {
                 // 再帰的に関数を呼び出すことですべてのフォルダのファイルを走査する
                 this.Getfiles(d, ref dic);
             }
+        }
+
+        /// <summary>
+        /// 対象のRootファイルに無視するフォルダの文字列が存在するかどうか
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        private bool Contains(string source)
+        {
+            return this.ExceptDirectory.Any(x => source.Contains(x));
         }
 
         /// <summary>
